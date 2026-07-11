@@ -1,0 +1,47 @@
+name: 'Honeydew Validate Workspace'
+description: >-
+  Validate that a Honeydew semantic-layer workspace has no validation errors,
+  using the Honeydew GraphQL API.
+author: 'Honeydew'
+branding:
+  icon: 'check-circle'
+  color: 'yellow'
+
+inputs:
+  api-key:
+    description: 'Honeydew API key name. Store it as a GitHub secret.'
+    required: true
+  api-secret:
+    description: 'Honeydew API key secret. Store it as a GitHub secret.'
+    required: true
+  base-url:
+    description: >-
+      Base URL of the Honeydew API. Only set this if your organization uses a
+      custom Honeydew hostname (see Settings > API in the Honeydew UI).
+    required: false
+    default: 'https://api.honeydew.cloud'
+  workspace:
+    description: >-
+      Honeydew workspace name to validate. When omitted, the workspace is
+      detected from the git branch name (Honeydew development branches are
+      named "<workspace>/<branch>").
+    required: false
+  branch:
+    description: >-
+      Honeydew branch name to validate. Requires the "workspace" input.
+      When omitted, it is detected from the git branch name, and defaults to
+      "prod" when only "workspace" is set.
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Validate Honeydew workspace
+      shell: bash
+      run: python3 "$GITHUB_ACTION_PATH/validate.py"
+      env:
+        HONEYDEW_API_KEY: ${{ inputs.api-key }}
+        HONEYDEW_API_SECRET: ${{ inputs.api-secret }}
+        HONEYDEW_BASE_URL: ${{ inputs.base-url }}
+        HONEYDEW_WORKSPACE: ${{ inputs.workspace }}
+        HONEYDEW_BRANCH: ${{ inputs.branch }}
