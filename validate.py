@@ -69,7 +69,7 @@ class HoneydewClient:
                 error.get("message", json.dumps(error)) for error in errors
             )
             fail(f"Honeydew API returned errors: {messages}")
-        return typing.cast(dict[str, typing.Any], payload["data"])
+        return typing.cast("dict[str, typing.Any]", payload["data"])
 
     def _post_with_retries(
         self,
@@ -87,7 +87,7 @@ class HoneydewClient:
                     request,
                     timeout=REQUEST_TIMEOUT_SECONDS,
                 ) as response:
-                    return typing.cast(dict[str, typing.Any], json.load(response))
+                    return typing.cast("dict[str, typing.Any]", json.load(response))
             except urllib.error.HTTPError as error:
                 if error.code in RETRIED_HTTP_CODES and attempt < RETRIES:
                     time.sleep(2 ** (attempt + 1))
@@ -183,9 +183,11 @@ def write_step_summary(results: ValidationResults) -> None:
     for (workspace, branch), errors in sorted(results.items()):
         result = "✅ valid" if not errors else f"❌ {len(errors)} error(s)"
         lines.append(f"| {workspace} | {branch} | {result} |")
-    for (workspace, branch), errors in sorted(results.items()):
-        for description in errors:
-            lines.append(f"- **{workspace}/{branch}**: {description}")
+    lines.extend(
+        f"- **{workspace}/{branch}**: {description}"
+        for (workspace, branch), errors in sorted(results.items())
+        for description in errors
+    )
     with open(summary_path, "a", encoding="utf-8") as summary:
         summary.write("\n".join(lines) + "\n")
 

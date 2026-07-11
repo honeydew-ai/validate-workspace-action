@@ -1,0 +1,118 @@
+target-version = "py312"
+line-length = 120
+
+[lint]
+# Preview mode with explicit-preview-rules: preview rules fire ONLY when selected
+# by exact code below (prefix selections like "PL" stay stable-rules-only).
+# Also enables preview behaviors of stable rules (e.g. F401 dead submodule imports).
+preview = true
+explicit-preview-rules = true
+# E/F: pycodestyle + pyflakes (defaults)
+# W: pycodestyle warnings (W605 invalid escape sequences, etc. — previously enforced by flake8)
+# B: flake8-bugbear, A: flake8-builtins, C4: flake8-comprehensions (replaced flake8 + plugins)
+# PL: pylint ruleset
+# FURB: refurb modernization rules
+# UP: pyupgrade (replaces pyupgrade hook)
+# RUF100: unused noqa (replaces yesqa hook)
+select = [
+    "E",
+    "E226",  # missing-whitespace-around-arithmetic-operator (preview)
+    "F",
+    "W",
+    "B",
+    "B909",  # loop-iterator-mutation: mutating a container while iterating it (preview)
+    "A",
+    "ASYNC",
+    "FAST",
+    "C4",
+    "PL",
+    "PLE1141",  # dict-iter-missing-items: tuple-unpacking a dict iteration without .items() (preview)
+    "FURB",
+    "FURB148",  # unnecessary-enumerate: enumerate() where index or value is unused (preview)
+    "FURB192",  # sorted-min-max: sorted(x)[0] → min(x) (preview)
+    "N801",
+    "N802",
+    "SLF001",
+    "BLE",
+    "ARG",
+    "EXE001",  # shebang-not-executable: file has a shebang but no exec bit
+    "UP",
+    "TRY002",  # raise-vanilla-class: raising bare Exception hides intent from callers
+    "TRY004",  # type-check-without-type-error: raise TypeError after a type check
+    "TRY201",  # verbose-raise: `raise e` in except → bare `raise`
+    "TRY203",  # useless-try-except: except block that only re-raises
+    "TRY400",  # error-instead-of-exception: logging.error() in except → logging.exception()
+    "RUF005",  # collection-literal-concatenation: `[*a, *b]` instead of `a + b`
+    "RUF006",  # asyncio-dangling-task: store created tasks to avoid GC mid-flight
+    "RUF010",  # explicit-f-string-type-conversion: f"{str(x)}" → f"{x!s}"
+    "RUF012",  # mutable-class-default: mutable list/dict/set as class attr shared across instances
+    "RUF015",  # unnecessary-iterable-allocation-for-first-element: list(x)[0] → next(iter(x))
+    "RUF018",  # assignment-in-assert: walrus in `assert` is a no-op under `-O`
+    "RUF019",  # unnecessary-key-check
+    "RUF021",  # parenthesize-chained-operators
+    "RUF022",  # unsorted-dunder-all: keep `__all__` sorted
+    "RUF100",
+    "RUF102",  # invalid-rule-code: unknown rule code inside a `# noqa` comment
+    "PGH004",  # blanket-noqa: `# noqa` must cite the specific rule code(s)
+    "RUF050",  # unnecessary-if: if statement whose body has no effect (preview)
+    "RUF055",  # unnecessary-regular-expression: re call replaceable by a plain str method (preview)
+    "RUF070",  # unnecessary-assign-before-yield: temp var assigned then immediately yielded (preview)
+    "RUF031",  # incorrectly-parenthesized-tuple-in-subscript: `d[(1, 2)]` → `d[1, 2]` (preview)
+    "PIE800",  # unnecessary-spread: drop unnecessary `**{...}` inside dict literals
+    "PIE807",  # reimplemented-container-builtin
+    "PIE808",  # unnecessary-range-start
+    "PT022",  # pytest-useless-yield-fixture: fixture yield with no teardown → return
+    "TC006",  # runtime-cast-value: quote the type in typing.cast() to skip runtime evaluation
+    "FLY002",  # static-join-to-f-string: `"".join([a, b])` → f-string
+    "G002",  # logging-percent-format: use lazy %-args, not `%` formatting
+    "G003",  # logging-string-concat: use lazy %-args, not `+` concatenation
+    "G004",  # logging-f-string: f-string interpolates even when the level is filtered out
+    "G010",  # logging-warn: deprecated `.warn` → `.warning`
+    "G101",  # logging-extra-attr-clash: `extra=` key shadows a LogRecord attribute
+    "G201",  # logging-exc-info: `.error(..., exc_info=True)` → `.exception(...)`
+    "G202",  # logging-redundant-exc-info: `.exception(..., exc_info=True)` duplicates
+    "LOG001",  # direct-logger-instantiation: use `logging.getLogger()`
+    "LOG002",  # invalid-get-logger-argument: `getLogger(__file__)` → `getLogger(__name__)`
+    "LOG007",  # exception-without-exc-info: `.exception(..., exc_info=False)` hides the traceback
+    "LOG009",  # undocumented-warn: `logging.WARN` alias → `logging.WARNING`
+    "LOG004",  # log-exception-outside-except-handler: .exception() with no active exception (preview)
+    "PERF102",  # incorrect-dict-iterator: .items() but only key/value used
+    "PERF401",  # manual-list-comprehension
+    "RSE102",  # unnecessary-paren-on-raise-exception: `raise Err()` → `raise Err`
+    "TD006",  # invalid-todo-capitalization: `# todo` → `# TODO`
+    # SIM: simplification rules (enforce patterns documented in AGENTS.md)
+    "SIM101",  # duplicate-isinstance-call: `isinstance(x, A) or isinstance(x, B)` → `isinstance(x, (A, B))`
+    "SIM102",  # collapsible-if: nested `if` → single `if … and …`
+    "SIM103",  # needless-bool: `if x: return True; return False` → `return x`
+    "SIM105",  # suppressible-exception: `try/except/pass` → `contextlib.suppress`
+    "SIM108",  # if-else-block-instead-of-if-exp: `if/else` assignment → ternary
+    "SIM109",  # compare-with-tuple: `x == a or x == b` → `x in (a, b)`
+    "SIM110",  # reimplemented-builtin: manual any()/all() loops
+    "SIM112",  # uncapitalized-environment-variables
+    "SIM113",  # enumerate-for-loop: manual index counter → enumerate()
+    "SIM114",  # if-with-same-arms: identical if/else bodies → or condition
+    "SIM115",  # open-file-with-context-handler: `open()` without `with`
+    "SIM116",  # if-else-block-instead-of-dict-lookup
+    "SIM117",  # multiple-with-statements: nested with → with a, b:
+    "SIM118",  # in-dict-keys: `key in dict.keys()` → `key in dict`
+    "SIM201",  # negate-equal-op: `not a == b` → `a != b`
+    "SIM210",  # if-expr-with-true-false: `True if x else False` → `bool(x)`
+    "SIM211",  # if-expr-with-false-true: `False if x else True` → `not x`
+    "SIM212",  # if-expr-with-twisted-arms: `x if not c else y` → `y if c else x`
+    "SIM220",  # expr-and-not-expr: `x and not x` is always False
+    "SIM221",  # expr-or-not-expr: `x or not x` is always True
+    "SIM222",  # expr-or-true: `x or True` is always True
+    "SIM223",  # expr-and-false: `x and False` is always False
+    "SIM300",  # yoda-conditions: `"val" == x` → `x == "val"`
+    "SIM401",  # if-else-block-instead-of-dict-get: `if k in d: v = d[k] else: v = default` → `d.get(k, default)`
+    "SIM905",  # split-static-string: `"a b".split()` → `["a", "b"]`
+    "SIM910",  # dict-get-with-none-default: `dict.get(k, None)` → `dict.get(k)`
+    "SIM911",  # zip-dict-keys-and-values: `zip(d.keys(), d.values())` → `d.items()`
+]
+# E203: whitespace before ':' (black-compatible slice formatting)
+# A005: module-level shadowing of builtins (existing pattern in codebase)
+# B905: zip() without explicit strict= (pre-existing pattern, will be addressed separately)
+# PLR2004: magic value comparisons (pre-existing pattern)
+# UP040/UP047: TypeAlias/Generic type params (Python 3.12 syntax, deferred)
+# UP042/UP046: StrEnum and Generic class rewrites (behavioral changes, deferred)
+ignore = ["E203", "A005", "B905", "PLR2004", "UP040", "UP042", "UP046", "UP047"]

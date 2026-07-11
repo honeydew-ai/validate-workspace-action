@@ -10,7 +10,11 @@ import validate
     ("workspace_input", "branch_input", "git_ref", "expected"),
     [
         pytest.param(
-            "sales", "q3-fixes", "whatever", [("sales", "q3-fixes")], id="explicit"
+            "sales",
+            "q3-fixes",
+            "whatever",
+            [("sales", "q3-fixes")],
+            id="explicit",
         ),
         pytest.param(
             "sales",
@@ -98,7 +102,8 @@ def _client_returning(workspaces: list[dict[str, typing.Any]]) -> mock.Mock:
     ],
 )
 def test_get_workspace_errors(
-    workspaces: list[dict[str, typing.Any]], expected: list[str]
+    workspaces: list[dict[str, typing.Any]],
+    expected: list[str],
 ) -> None:
     client = _client_returning(workspaces)
     assert (
