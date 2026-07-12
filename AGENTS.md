@@ -24,7 +24,7 @@ This repository contains a GitHub Action that validates
 
 ## Python Guidelines
 
-- Target Python 3.10+ syntax on runners; type-check with mypy (strict) at 3.12.
+- Target Python 3.12+ syntax on runners; type-check with mypy (strict) at 3.12.
 - Use modern type syntax: `X | None`, `list[str]`, `dict[str, int]` — import
   from `typing` only for advanced types (`typing.Any`, `typing.NoReturn`,
   `typing.cast`).
