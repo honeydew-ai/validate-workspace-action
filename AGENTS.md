@@ -28,8 +28,9 @@ This repository contains a GitHub Action that validates
 - Use modern type syntax: `X | None`, `list[str]`, `dict[str, int]` — import
   from `typing` only for advanced types (`typing.Any`, `typing.NoReturn`,
   `typing.cast`).
-- Formatting and linting are enforced by pre-commit (black, isort profile=black,
-  ruff — see `ruff.toml` — and more). Keep lines under 100 characters.
+- Formatting and linting are enforced by pre-commit (black, ruff with ALL rules
+  including import sorting — see `ruff.toml` — yamllint, mypy, and more).
+  Keep lines under 100 characters.
 - Use keyword-only arguments (`*` separator) for functions with multiple parameters.
 - Module-level constants use ALL_CAPS.
 - Use the walrus operator for assign-then-check patterns.

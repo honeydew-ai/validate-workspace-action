@@ -13,6 +13,8 @@ import time
 import typing
 import urllib.error
 import urllib.request
+from http import HTTPStatus
+from pathlib import Path
 
 MAIN_BRANCH = "prod"
 REQUEST_TIMEOUT_SECONDS = 300
@@ -42,6 +44,8 @@ def fail(message: str) -> typing.NoReturn:
 
 class HoneydewClient:
     def __init__(self, *, base_url: str, api_key: str, api_secret: str) -> None:
+        if not base_url.startswith(("https://", "http://")):
+            fail(f"Invalid base-url '{base_url}': must start with https:// or http://")
         self._endpoint = base_url.rstrip("/") + "/api/public/v1/graphql"
         token = base64.b64encode(f"{api_key}:{api_secret}".encode()).decode()
         self._headers = {
@@ -77,13 +81,13 @@ class HoneydewClient:
         headers: dict[str, str],
     ) -> dict[str, typing.Any]:
         for attempt in range(RETRIES + 1):
-            request = urllib.request.Request(
+            request = urllib.request.Request(  # noqa: S310  # suspicious-url-open-usage
                 self._endpoint,
                 data=body,
                 headers=headers,
             )
             try:
-                with urllib.request.urlopen(
+                with urllib.request.urlopen(  # noqa: S310  # suspicious-url-open-usage
                     request,
                     timeout=REQUEST_TIMEOUT_SECONDS,
                 ) as response:
@@ -93,7 +97,7 @@ class HoneydewClient:
                     time.sleep(2 ** (attempt + 1))
                     continue
                 detail = error.read().decode(errors="replace")[:500]
-                if error.code == 401:
+                if error.code == HTTPStatus.UNAUTHORIZED:
                     fail(
                         "Honeydew API authentication failed (HTTP 401). Check the "
                         "api-key and api-secret inputs, and make sure the public "
@@ -105,7 +109,7 @@ class HoneydewClient:
                     f"Cannot reach the Honeydew API at {self._endpoint}: "
                     f"{error.reason}",
                 )
-        raise AssertionError("unreachable")
+        raise AssertionError
 
 
 def resolve_targets(
@@ -126,9 +130,9 @@ def resolve_targets(
         return [(workspace_input, branch_input or MAIN_BRANCH)]
     if branch_input:
         fail("The 'branch' input requires the 'workspace' input as well.")
-    parts = git_ref.split("/")
-    if len(parts) == 2:
-        return [(parts[0], parts[1])]
+    match git_ref.split("/"):
+        case [workspace, branch]:
+            return [(workspace, branch)]
     if git_ref == default_branch:
         return None
     fail(
@@ -188,15 +192,15 @@ def write_step_summary(results: ValidationResults) -> None:
         for (workspace, branch), errors in sorted(results.items())
         for description in errors
     )
-    with open(summary_path, "a", encoding="utf-8") as summary:
+    with Path(summary_path).open("a", encoding="utf-8") as summary:
         summary.write("\n".join(lines) + "\n")
 
 
 def read_default_branch() -> str:
     event_path = os.environ.get("GITHUB_EVENT_PATH")
-    if not event_path or not os.path.exists(event_path):
+    if not event_path or not Path(event_path).exists():
         return ""
-    with open(event_path, encoding="utf-8") as event_file:
+    with Path(event_path).open(encoding="utf-8") as event_file:
         event = json.load(event_file)
     return str((event.get("repository") or {}).get("default_branch") or "")
 
