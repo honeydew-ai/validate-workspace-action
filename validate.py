@@ -72,6 +72,7 @@ query {
 CONTEXT_ERRORS_QUERY = """
 query {
   context_items(has_errors: true) {
+    __typename
     ... on InstructionFrontmatter {
       path
       validation_errors {
@@ -314,11 +315,14 @@ def get_object_errors(
         )
         return errors
     for kind, key in (("Context item", "context_items"), ("Agent", "agents")):
-        errors.extend(
-            f"{kind} '{item['path']}': {validation['error']}"
-            for item in context_data[key]
-            for validation in item["validation_errors"]
-        )
+        for item in context_data[key]:
+            if "path" not in item:  # union member not covered by the query fragments
+                print(f"Skipping {kind.lower()} of type {item.get('__typename')}")
+                continue
+            errors.extend(
+                f"{kind} '{item['path']}': {validation['error']}"
+                for validation in item["validation_errors"]
+            )
     return errors
 
 

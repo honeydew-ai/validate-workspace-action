@@ -103,6 +103,7 @@ CONTEXT_ERRORS: dict[str, typing.Any] = {
             "path": "instructions/tone.md",
             "validation_errors": [{"error": "bad frontmatter"}],
         },
+        {"__typename": "SkillFrontmatter"},
     ],
     "agents": [
         {
