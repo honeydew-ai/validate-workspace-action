@@ -57,6 +57,22 @@ convention:
 Before checking for errors, the action reloads the workspace from git
 (`reset_workspace`), so validation always reflects the latest commit of the branch.
 
+## What is validated
+
+The action first checks that the workspace itself loads without errors, then checks
+every object in it:
+
+- **Entities** and the fields within them (datasets, dataset attributes,
+  calculated attributes, metrics, and filters)
+- **Domains**
+- **Perspectives** (dynamic datasets)
+- **Global parameters**
+- **Context items** (instructions and memories)
+- **Agents**
+
+If the workspace fails to load (for example, a YAML parse error), the workspace-level
+errors are reported and the per-object checks are skipped.
+
 ## Inputs
 
 | Input | Required | Default | Description |
@@ -77,6 +93,22 @@ Example with explicit workspace selection:
           workspace: sales
           branch: q3-fixes
 ```
+
+## Running locally
+
+For development and testing, the script can run outside GitHub Actions and
+authenticate with a user bearer token instead of an API key:
+
+```bash
+HONEYDEW_BASE_URL=http://localhost:3000 \
+HONEYDEW_TOKEN="<your token>" \
+HONEYDEW_WORKSPACE=sales \
+HONEYDEW_BRANCH=prod \
+python3 validate.py
+```
+
+`HONEYDEW_TOKEN` takes precedence over `HONEYDEW_API_KEY` / `HONEYDEW_API_SECRET`.
+The same public GraphQL API endpoint is used in both modes.
 
 ## Output
 

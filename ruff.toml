@@ -27,4 +27,5 @@ ignore = ["E203", "D1", "D203", "D213", "T201"]
 
 [lint.per-file-ignores]
 # S101: assert is how pytest tests assert
-"test_*.py" = ["S101"]
+# S106: fake credentials passed to keyword arguments in tests
+"test_*.py" = ["S101", "S106"]
