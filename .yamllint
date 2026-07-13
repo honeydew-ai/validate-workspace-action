@@ -1,0 +1,10 @@
+---
+extends: default
+
+rules:
+  comments: disable
+  comments-indentation: disable
+  line-length:
+    max: 120
+  document-start: disable
+  truthy: disable

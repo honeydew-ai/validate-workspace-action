@@ -1,0 +1,31 @@
+target-version = "py312"
+line-length = 120
+
+[lint]
+# All stable rules ("ALL" includes the isort "I" rules — no separate isort hook),
+# plus the preview rules listed explicitly below (with explicit-preview-rules,
+# preview rules fire ONLY when selected by exact code).
+preview = true
+explicit-preview-rules = true
+select = [
+    "ALL",
+    "E226",  # missing-whitespace-around-arithmetic-operator (preview)
+    "B909",  # loop-iterator-mutation: mutating a container while iterating it (preview)
+    "PLE1141",  # dict-iter-missing-items: tuple-unpacking a dict iteration without .items() (preview)
+    "FURB148",  # unnecessary-enumerate: enumerate() where index or value is unused (preview)
+    "FURB192",  # sorted-min-max: sorted(x)[0] → min(x) (preview)
+    "RUF050",  # unnecessary-if: if statement whose body has no effect (preview)
+    "RUF055",  # unnecessary-regular-expression: re call replaceable by a plain str method (preview)
+    "RUF070",  # unnecessary-assign-before-yield: temp var assigned then immediately yielded (preview)
+    "LOG004",  # log-exception-outside-except-handler: .exception() with no active exception (preview)
+]
+# E203: whitespace before ':' (black-compatible slice formatting)
+# D1: missing docstrings — not required in this small codebase
+# D203/D213: conflict with D211/D212 (one of each pair must be disabled)
+# T201: print is the output channel of a GitHub Action step
+ignore = ["E203", "D1", "D203", "D213", "T201"]
+
+[lint.per-file-ignores]
+# S101: assert is how pytest tests assert
+# S106: fake credentials passed to keyword arguments in tests
+"test_*.py" = ["S101", "S106"]
