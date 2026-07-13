@@ -30,7 +30,7 @@ This repository contains a GitHub Action that validates
   `typing.cast`).
 - Formatting and linting are enforced by pre-commit (black, ruff with ALL rules
   including import sorting — see `ruff.toml` — yamllint, mypy, and more).
-  Keep lines under 100 characters.
+  Lines stay under 120 characters (the ruff limit; black wraps sooner).
 - Use keyword-only arguments (`*` separator) for functions with multiple parameters.
 - Module-level constants use ALL_CAPS.
 - Use the walrus operator for assign-then-check patterns.
