@@ -253,13 +253,12 @@ def resolve_targets(
     match git_ref.split("/"):
         case [workspace, branch]:
             return [(workspace, branch)]
-        case [_, _, *_]:
+        case [_, middle, _] if middle == MAIN_BRANCH:
             # Honeydew names system-managed branches "<workspace>/prod/<hash>"
-            # (e.g. when provisioning a workspace). These aren't development
-            # branches that map to a single workspace/branch to validate, so
-            # skip them and report success.
+            # (e.g. when provisioning a workspace). These don't map to a single
+            # development branch to validate, so skip them and report success.
             print(
-                f"Skipping git branch '{git_ref}': not a Honeydew development branch.",
+                f"Skipping git branch '{git_ref}': Honeydew system-managed branch.",
             )
             return []
     if git_ref == default_branch:
