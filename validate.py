@@ -235,7 +235,11 @@ def resolve_targets(
     git_ref: str,
     default_branch: str,
 ) -> list[WorkspaceBranch] | None:
-    """Return (workspace, branch) pairs to validate, or None for all-prod.
+    """Return (workspace, branch) pairs to validate.
+
+    ``None`` means "validate every workspace's prod branch" (used on the
+    repository's default branch). An empty list means "nothing to validate":
+    the caller reports success without contacting a workspace.
 
     Detection follows the Honeydew git branch convention: a development
     branch of workspace "sales" named "q3-fixes" lives on the git branch
@@ -249,6 +253,14 @@ def resolve_targets(
     match git_ref.split("/"):
         case [workspace, branch]:
             return [(workspace, branch)]
+        case [_, middle, _] if middle == MAIN_BRANCH:
+            # Honeydew names system-managed branches "<workspace>/prod/<hash>"
+            # (e.g. when provisioning a workspace). These don't map to a single
+            # development branch to validate, so skip them and report success.
+            print(
+                f"Skipping git branch '{git_ref}': Honeydew system-managed branch.",
+            )
+            return []
     if git_ref == default_branch:
         return None
     fail(
