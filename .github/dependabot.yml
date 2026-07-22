@@ -7,12 +7,16 @@ updates:
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
 
   # Test-only dependencies in requirements-test.txt; validate.py itself is stdlib-only.
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 10
     allow:
       - dependency-type: all
@@ -26,4 +30,6 @@ updates:
     directory: /
     schedule:
       interval: daily
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 10
