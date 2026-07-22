@@ -4,7 +4,7 @@ description: >-
   using the Honeydew GraphQL API.
 author: 'Honeydew'
 branding:
-  icon: 'check'
+  icon: 'check-circle'
   color: 'green'
 
 inputs:
