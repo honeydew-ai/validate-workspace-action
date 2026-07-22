@@ -1,5 +1,7 @@
 # Honeydew Validate Workspace Action
 
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Honeydew%20Validate%20Workspace-blue?logo=github)](https://github.com/marketplace/actions/honeydew-validate-workspace)
+
 A GitHub Action that validates [Honeydew](https://honeydew.ai) semantic-layer workspaces,
 verifying that changes in a pull request or branch produce **zero validation errors**
 before they are merged.
@@ -29,6 +31,18 @@ jobs:
         with:
           api-key: ${{ secrets.HONEYDEW_API_KEY }}
           api-secret: ${{ secrets.HONEYDEW_API_SECRET }}
+```
+
+### Pinning a version
+
+`@v1` tracks the latest v1 release and receives patches automatically. For
+reproducible builds — or if you prefer to review each update yourself — pin to a
+full release tag or commit SHA instead:
+
+```yaml
+      - uses: honeydew-ai/validate-workspace-action@v1.1.0   # exact release
+      # or
+      - uses: honeydew-ai/validate-workspace-action@<commit-sha>
 ```
 
 ## Prerequisites
@@ -101,7 +115,7 @@ For development and testing, the script can run outside GitHub Actions and
 authenticate with a user bearer token instead of an API key:
 
 ```bash
-HONEYDEW_BASE_URL=http://localhost:3000 \
+HONEYDEW_BASE_URL=http://localhost:5000 \
 HONEYDEW_TOKEN="<your token>" \
 HONEYDEW_WORKSPACE=sales \
 HONEYDEW_BRANCH=prod \
