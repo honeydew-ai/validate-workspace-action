@@ -52,6 +52,7 @@ convention:
 |---|---|
 | Pull request from a `<workspace>/<branch>` branch | That workspace, on that Honeydew branch |
 | Push to the default git branch (e.g. `main`) | All workspaces, on the `prod` branch |
+| A Honeydew system-managed branch (`<workspace>/prod/<hash>`) | Nothing — skipped, reported as success |
 | Anything else | Requires the explicit `workspace` / `branch` inputs |
 
 Before checking for errors, the action reloads the workspace from git

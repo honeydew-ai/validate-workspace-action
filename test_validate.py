@@ -35,6 +35,13 @@ import validate
             id="honeydew_branch_convention",
         ),
         pytest.param("", "", "main", None, id="default_branch_validates_all_prod"),
+        pytest.param(
+            "",
+            "",
+            "tasty_bytes_databricks/prod/a36d4900",
+            [],
+            id="system_managed_prod_branch_is_skipped",
+        ),
     ],
 )
 def test_resolve_targets(
@@ -57,7 +64,8 @@ def test_resolve_targets(
     [
         pytest.param("", "q3-fixes", "whatever", id="branch_without_workspace"),
         pytest.param("", "", "some-feature", id="unrecognized_branch"),
-        pytest.param("", "", "a/b/c", id="deeply_nested_branch"),
+        pytest.param("", "", "sales/dev/abc123", id="three_segments_non_prod_middle"),
+        pytest.param("", "", "a/prod/b/c", id="four_segments"),
     ],
 )
 def test_resolve_targets_fails(
