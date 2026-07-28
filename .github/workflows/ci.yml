@@ -15,6 +15,6 @@ jobs:
           python-version: '3.12'
       - uses: pre-commit/action@v3.0.1
       # setup-uv publishes no floating v8 major tag — pin the exact release
-      - uses: astral-sh/setup-uv@v8.3.2
+      - uses: astral-sh/setup-uv@v9.0.0
       - run: uv pip install --system -r requirements-test.txt
       - run: pytest -v
