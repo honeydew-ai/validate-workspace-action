@@ -2,7 +2,7 @@ name: 'Honeydew Validate Workspace'
 description: >-
   Validate that a Honeydew semantic-layer workspace has no validation errors,
   using the Honeydew GraphQL API.
-author: 'Honeydew'
+author: 'Honeydew Data Inc.'
 branding:
   icon: 'check-circle'
   color: 'green'

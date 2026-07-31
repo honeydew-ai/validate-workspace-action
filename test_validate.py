@@ -1,3 +1,6 @@
+# Copyright 2026 Honeydew Data Inc.
+# SPDX-License-Identifier: Apache-2.0
+
 import email.message
 import io
 import typing

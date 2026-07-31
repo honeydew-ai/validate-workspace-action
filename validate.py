@@ -1,3 +1,6 @@
+# Copyright 2026 Honeydew Data Inc.
+# SPDX-License-Identifier: Apache-2.0
+
 """Validate Honeydew workspaces via the Honeydew GraphQL API.
 
 Entry point of the honeydew-ai/validate-workspace-action GitHub Action.
