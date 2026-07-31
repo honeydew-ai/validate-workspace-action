@@ -133,4 +133,6 @@ The same public GraphQL API endpoint is used in both modes.
 
 ## License
 
+Copyright 2026 Honeydew Data Inc.
+
 [Apache License 2.0](LICENSE)
