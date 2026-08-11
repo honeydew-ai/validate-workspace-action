@@ -28,7 +28,7 @@ repos:
       - id: codespell
         files: ^.*\.(py|md|yml|yaml|toml)$
   - repo: https://github.com/crate-ci/typos
-    rev: v1.48.0
+    rev: v1.49.0
     hooks:
       - id: typos
   - repo: https://github.com/pre-commit/pre-commit-hooks
