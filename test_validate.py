@@ -268,6 +268,10 @@ def test_get_all_prod_errors_collects_only_prod_branches() -> None:
         pytest.param(0, " 7 ", 7.0, id="retry_after_is_stripped"),
         pytest.param(0, "900", 60.0, id="retry_after_is_capped"),
         pytest.param(3, "-1", 8.0, id="negative_retry_after_ignored"),
+        pytest.param(3, "NaN", 8.0, id="nan_falls_back_to_backoff"),
+        pytest.param(3, "nan", 8.0, id="lowercase_nan_falls_back_to_backoff"),
+        pytest.param(3, "inf", 8.0, id="infinity_ignored"),
+        pytest.param(3, "-inf", 8.0, id="negative_infinity_ignored"),
         pytest.param(
             3,
             "Wed, 21 Oct 2026 07:28:00 GMT",

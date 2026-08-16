@@ -10,6 +10,7 @@ without installing dependencies.
 
 import base64
 import json
+import math
 import os
 import sys
 import time
@@ -313,7 +314,9 @@ def _parse_retry_after(retry_after: str | None) -> float | None:
         seconds = float(retry_after.strip())
     except ValueError:
         return None
-    if seconds < 0:
+    # float() accepts "NaN", which survives both the comparison below and the cap
+    # (every comparison with NaN is false) and then makes time.sleep raise.
+    if not math.isfinite(seconds) or seconds < 0:
         return None
     return min(seconds, MAX_RETRY_AFTER_SECONDS)
 
