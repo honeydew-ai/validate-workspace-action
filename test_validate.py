@@ -256,6 +256,55 @@ def test_get_all_prod_errors_collects_only_prod_branches() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    ("attempt", "retry_after", "expected"),
+    [
+        pytest.param(0, None, 1.0, id="first_wait_is_the_minimum"),
+        pytest.param(1, None, 2.0, id="doubles"),
+        pytest.param(2, None, 4.0, id="doubles_again"),
+        pytest.param(4, None, 16.0, id="still_below_the_cap"),
+        pytest.param(10, None, 30.0, id="capped_at_max"),
+        pytest.param(0, "7", 7.0, id="retry_after_wins"),
+        pytest.param(0, " 7 ", 7.0, id="retry_after_is_stripped"),
+        pytest.param(0, "900", 60.0, id="retry_after_is_capped"),
+        pytest.param(3, "-1", 8.0, id="negative_retry_after_ignored"),
+        pytest.param(3, "NaN", 8.0, id="nan_falls_back_to_backoff"),
+        pytest.param(3, "nan", 8.0, id="lowercase_nan_falls_back_to_backoff"),
+        pytest.param(3, "inf", 8.0, id="infinity_ignored"),
+        pytest.param(3, "-inf", 8.0, id="negative_infinity_ignored"),
+        pytest.param(
+            3,
+            "Wed, 21 Oct 2026 07:28:00 GMT",
+            8.0,
+            id="http_date_form_falls_back_to_backoff",
+        ),
+    ],
+)
+def test_retry_delay(attempt: int, retry_after: str | None, expected: float) -> None:
+    assert validate.retry_delay(attempt, retry_after) == expected
+
+
+def test_backoff_schedule_outlasts_a_brief_api_restart() -> None:
+    """The five retries wait 1+2+4+8+16 = 31s in total, on top of the requests."""
+    waits = [validate.retry_delay(attempt, None) for attempt in range(validate.RETRIES)]
+    assert waits == [1.0, 2.0, 4.0, 8.0, 16.0]
+
+
+@pytest.mark.parametrize(
+    ("message", "expected"),
+    [
+        pytest.param("plain", "plain", id="plain"),
+        pytest.param("a\nb", "a%0Ab", id="newline"),
+        pytest.param("100%", "100%25", id="percent"),
+        pytest.param("a\r\n::add-mask::x", "a%0D%0A::add-mask::x", id="forged_command"),
+        pytest.param("50%\n", "50%25%0A", id="percent_then_newline_escaped_once"),
+    ],
+)
+def test_escape_workflow_command(message: str, expected: str) -> None:
+    """One pass, so the percent signs introduced here are not re-escaped."""
+    assert validate.escape_workflow_command(message) == expected
+
+
 ENDPOINT = "https://api.example.com/api/public/v1/graphql"
 
 
@@ -302,15 +351,15 @@ def test_gql_sends_auth_and_context_headers() -> None:
 @pytest.mark.parametrize(
     ("transient", "expected_sleeps"),
     [
-        pytest.param(_http_error(503), [mock.call(2), mock.call(4)], id="http_503"),
+        pytest.param(_http_error(503), [mock.call(1.0), mock.call(2.0)], id="http_503"),
         pytest.param(
             urllib.error.URLError("connection reset"),
-            [mock.call(2), mock.call(4)],
+            [mock.call(1.0), mock.call(2.0)],
             id="url_error",
         ),
         pytest.param(
             TimeoutError("timed out"),
-            [mock.call(2), mock.call(4)],
+            [mock.call(1.0), mock.call(2.0)],
             id="timeout",
         ),
     ],
@@ -335,18 +384,18 @@ def test_gql_retries_transient_failures_then_succeeds(
     ("responses", "expected_output"),
     [
         pytest.param(
-            [_http_error(503)] * 4,
+            [_http_error(503)] * (validate.RETRIES + 1),
             "::error::Honeydew API request failed with HTTP 503: server detail\n",
             id="retries_exhausted",
         ),
         pytest.param(
-            [urllib.error.URLError("connection reset")] * 4,
+            [urllib.error.URLError("connection reset")] * (validate.RETRIES + 1),
             f"::error::Cannot reach the Honeydew API at {ENDPOINT}: "
             "connection reset\n",
             id="network_error_exhausted",
         ),
         pytest.param(
-            [TimeoutError("timed out")] * 4,
+            [TimeoutError("timed out")] * (validate.RETRIES + 1),
             f"::error::Cannot reach the Honeydew API at {ENDPOINT}: timed out\n",
             id="timeout_exhausted",
         ),
