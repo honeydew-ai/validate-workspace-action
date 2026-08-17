@@ -23,7 +23,7 @@ repos:
     hooks:
       - id: yamllint
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.4
+    rev: 0.38.0
     hooks:
       # The only check that reads action.yml, which is this repo's product.
       - id: check-github-actions
