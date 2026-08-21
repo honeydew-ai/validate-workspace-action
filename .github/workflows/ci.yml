@@ -15,6 +15,6 @@ jobs:
           python-version: '3.12'
       - uses: pre-commit/action@v3.0.1
       # setup-uv stopped publishing floating major tags after v7 — pin the exact release
-      - uses: astral-sh/setup-uv@v10.0.0
+      - uses: astral-sh/setup-uv@v10.0.1
       - run: uv pip install --system -r requirements-test.txt
       - run: pytest -v
