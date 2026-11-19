@@ -36,6 +36,13 @@ repos:
       # Semantics the schema cannot express: expression types, context
       # availability, and shellcheck over run: blocks.
       - id: actionlint
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.32.0
+    hooks:
+      # Security audit of the CI config. --offline keeps it deterministic and
+      # token-free (the online audits need a GitHub token).
+      - id: zizmor
+        args: ["--no-progress", "--offline"]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.3
     hooks:
